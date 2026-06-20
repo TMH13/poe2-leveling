@@ -14,6 +14,7 @@
     --bronze:#A1722A; --bronze-bg:#F3E8D2;
     --olive:#5F7333; --olive-bg:#E9EDD7;
     --verisium:#2C6F88; --verisium-bg:#DCEAEE;
+    --slate:#55606B; --slate-bg:#E4E6E9;
     --shadow:0 1px 2px rgba(42,37,29,.06), 0 8px 24px rgba(42,37,29,.07);
   }
   *{box-sizing:border-box}
@@ -49,7 +50,7 @@
   .legend{display:flex;flex-wrap:wrap;gap:8px}
   .key{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;font-weight:500;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff}
   .dot{width:11px;height:11px;border-radius:3px;flex:none}
-  .dot.book{background:var(--bronze)} .dot.buff{background:var(--olive)} .dot.rune{background:var(--verisium)}
+  .dot.book{background:var(--bronze)} .dot.buff{background:var(--olive)} .dot.rune{background:var(--verisium)} .dot.bench{background:var(--slate)}
   .controls{display:flex;gap:8px}
   .btn{font-family:"Spline Sans Mono",monospace;font-weight:600;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase;
        cursor:pointer;background:var(--ink);color:var(--parch);border:1px solid var(--ink);padding:8px 13px;border-radius:9px;transition:transform .12s ease}
@@ -85,9 +86,11 @@
   tbody tr.book>td:first-child{border-left:3px solid var(--bronze)}
   tbody tr.buff>td:first-child{border-left:3px solid var(--olive)}
   tbody tr.rune>td:first-child{border-left:3px solid var(--verisium)}
+  tbody tr.bench>td:first-child{border-left:3px solid var(--slate)}
   tbody tr.book:hover td{background:var(--bronze-bg)}
   tbody tr.buff:hover td{background:var(--olive-bg)}
   tbody tr.rune:hover td{background:var(--verisium-bg)}
+  tbody tr.bench:hover td{background:var(--slate-bg)}
   .lvl{font-family:"Spline Sans Mono",monospace;font-weight:600;font-size:.78rem;color:var(--ink);
        background:var(--parch-2);border:1px solid var(--line-strong);border-radius:7px;padding:3px 8px;white-space:nowrap;display:inline-block}
   td.zone{font-weight:600}
@@ -96,6 +99,7 @@
   .pill.book{color:var(--bronze);background:var(--bronze-bg);border-color:#E2Cfa3}
   .pill.buff{color:var(--olive);background:var(--olive-bg);border-color:#cdd8a8}
   .pill.rune{color:var(--verisium);background:var(--verisium-bg);border-color:#b9d4dc}
+  .pill.bench{color:var(--slate);background:var(--slate-bg);border-color:#c4c9cf}
   .or{color:var(--ink-soft);font-style:italic}
   .tag{display:inline-block;font-family:"Spline Sans Mono",monospace;font-size:.58rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
        padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:1px}
@@ -118,7 +122,8 @@
     tbody tr.book{border-left:3px solid var(--bronze)}
     tbody tr.buff{border-left:3px solid var(--olive)}
     tbody tr.rune{border-left:3px solid var(--verisium)}
-    tbody tr.book>td:first-child,tbody tr.buff>td:first-child,tbody tr.rune>td:first-child{border-left:none}
+    tbody tr.bench{border-left:3px solid var(--slate)}
+    tbody tr.book>td:first-child,tbody tr.buff>td:first-child,tbody tr.rune>td:first-child,tbody tr.bench>td:first-child{border-left:none}
     td.lvlcell{margin-bottom:4px}
     td.zone::before,td.reward::before,td.action::before{
       content:attr(data-l);display:block;font-family:"Spline Sans Mono",monospace;font-size:.58rem;
@@ -133,7 +138,7 @@
   <header>
     <div class="eyebrow">Path of Exile 2 · 0.5.0 Return of the Ancients</div>
     <h1>Permanent rewards,<br><span class="glow">ordered by zone level.</span></h1>
-    <p class="lede">Every life-of-the-character campaign reward — Books of Specialisation, permanent stat buffs &amp; abilities, and the <strong>Runes of Aldur</strong> (Runeseeker) chain — sorted within each act by the zone's area level, so it doubles as a clean leveling route. Grab top-to-bottom and skip everything else.</p>
+    <p class="lede">Every life-of-the-character campaign reward — Books of Specialisation, permanent stat buffs &amp; abilities, crafting-bench unlocks, and the <strong>Runes of Aldur</strong> (Runeseeker) chain — sorted within each act by the zone's area level, so it doubles as a clean leveling route. Grab top-to-bottom and skip everything else.</p>
     <div class="meta">
       <span>League: <b>Runes of Aldur</b></span>
       <span>Patch <b>0.5.x</b></span>
@@ -147,6 +152,7 @@
       <span class="key"><span class="dot book"></span>Book / Skill Points</span>
       <span class="key"><span class="dot buff"></span>Permanent Buff / Ability</span>
       <span class="key"><span class="dot rune"></span>Runes of Aldur (league)</span>
+      <span class="key"><span class="dot bench"></span>Crafting Bench (1st char)</span>
     </div>
     <div class="controls">
       <button class="btn ghost" id="collapseAll">Collapse all</button>
@@ -174,6 +180,7 @@
           <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">12</span></td><td class="zone" data-l="Zone">Ogham Farmlands</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>Book of Specialisation</td><td class="action" data-l="Action"><b>The Lost Lute</b> — grab Una's lute here, return it to Una in town</td></tr>
           <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">12</span></td><td class="zone" data-l="Zone">Ogham Farmlands</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone (3 of 3)</td><td class="action" data-l="Action">Interact with the runestone (in a crop field)</td></tr>
           <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">~12</span></td><td class="zone" data-l="Zone">Grelwood → Lost Catacombs → Clearfell</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Verisium Anvil — Armour Runeforging <span class="tag gate">Required</span></td><td class="action" data-l="Action">After all 3 runestones: summon Farrow at the <b>Tree of Souls</b>, clear the Catacombs, take Liquid Verisium, return to town</td></tr>
+          <tr class="bench"><td class="lvlcell" data-l="Lvl"><span class="lvl">12–13</span></td><td class="zone" data-l="Zone">Ogham Village</td><td class="reward" data-l="Reward"><span class="pill bench">Bench</span>Salvage Bench <span class="tag pick">1st char</span></td><td class="action" data-l="Action">Pick up the <b>Smithing Tools</b> in the smithing house (off the cobble road)</td></tr>
           <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">13–14</span></td><td class="zone" data-l="Zone">Ogham Manor</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+20 Maximum Life</td><td class="action" data-l="Action">Kill <b>Candlemass, the Living Rite</b> (1st floor)</td></tr>
         </tbody>
       </table>
@@ -226,6 +233,7 @@
           <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">35</span></td><td class="zone" data-l="Zone">The Venom Crypts</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+25% Stun Threshold <span class="or">or</span> +30% Elemental Ailment Threshold <span class="or">or</span> +25% Mana Regen <span class="tag pick">Permanent</span></td><td class="action" data-l="Action"><b>The Slithering Dead</b> — loot Orok Poison, hand it to Servi in town (cannot change later)</td></tr>
           <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">35</span></td><td class="zone" data-l="Zone">The Venom Crypts</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone</td><td class="action" data-l="Action">Activate the runestone</td></tr>
           <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">~34</span></td><td class="zone" data-l="Zone">Infested Barrens → Mystic Refuge</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Unlocks Unique Verisium Runeforging</td><td class="action" data-l="Action">After all 3 runestones: clear the Mystic Refuge vault, talk to Farrow</td></tr>
+          <tr class="bench"><td class="lvlcell" data-l="Lvl"><span class="lvl">36</span></td><td class="zone" data-l="Zone">The Molten Vault</td><td class="reward" data-l="Reward"><span class="pill bench">Bench</span>Reforging Bench <span class="tag pick">1st char</span></td><td class="action" data-l="Action">Kill <b>Mektul, the Forgemaster</b>, return the Hammer of Kamasa to Oswald in town</td></tr>
           <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">39–40</span></td><td class="zone" data-l="Zone">Aggorat</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>+2 Skill Points (quest item)</td><td class="action" data-l="Action"><b>Sacrificial Heart</b> — farm the heart from Vaal Goliaths (Utzaal/Aggorat), use it on the Sacrificial Altar</td></tr>
         </tbody>
       </table>
@@ -310,6 +318,7 @@
       <li><b>Books of Specialisation</b> give 2 passive points <i>and</i> unlock 2 weapon-set points each — right-click to consume. Collect them all and you should reach <b>24 weapon-set points per set</b> by the end of the Interludes.</li>
       <li><b>Changeable later:</b> only <b>Ancient Vows</b>, <b>the Seven Pillars (Orbala)</b>, and <b>Goddess of Justice</b> can be re-picked. The Venom Crypts / Servi choice and everything else is locked once chosen.</li>
       <li><b>All buffs are missable</b> — they come from optional bosses/side quests.</li>
+      <li><b>Crafting benches</b> (Salvage in Ogham Village, Reforging at the Molten Vault) only need to be unlocked on your <b>first character</b> — they're available from the start on later characters, so you can skip them on alts. The league's <b>Verisium Anvil</b> (Runeforging) is the Runes of Aldur bench and is listed under that chain.</li>
       <li><b>Runeforging gate:</b> the Act 1 <b>Lost Catacombs</b> vault must be cleared to unlock the Verisium Anvil — later acts won't open it on their own.</li>
       <li><b>Act 4 skill points:</b> this newest act varies by source — Game8 lists a "Dark Mists" Book at Kedge Bay, while the live 0.5 route credits <b>Omniphobia (Journey's End)</b>. Either way Act 4 grants <b>+4 skill points</b> total (the other +2 is Trial of the Ancestors). Verify in-game.</li>
     </ul>
