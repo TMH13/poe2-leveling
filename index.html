@@ -6,139 +6,234 @@
 <title>PoE2 — Permanent Rewards by Zone Level (0.5.0 Runes of Aldur)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,560;9..144,640&family=Inter:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --parch:#F6F0E3; --parch-2:#EFE7D6; --surface:#FCFAF3;
-    --ink:#2A251D; --ink-soft:#6A6052; --line:#E1D6BF; --line-strong:#CBBC9C;
-    --bronze:#A1722A; --bronze-bg:#F3E8D2;
-    --olive:#5F7333; --olive-bg:#E9EDD7;
-    --verisium:#2C6F88; --verisium-bg:#DCEAEE;
-    --slate:#55606B; --slate-bg:#E4E6E9;
-    --shadow:0 1px 2px rgba(42,37,29,.06), 0 8px 24px rgba(42,37,29,.07);
+    --bg:#0b0807; --bg-2:#100c0a; --stone:#16110d; --stone-2:#1c1612; --stone-hi:#241c15;
+    --ink:#e9d6c5; --ink:#e9dcc2; --ink-soft:#ab9c80; --ink-faint:#7d7058;
+    --gold:#c9a35c; --gold-hi:#efd497; --gold-deep:#8a6a2f;
+    --line:#352c20; --line-hi:#4d3f2b;
+    --book:#d9b15f; --book-bg:rgba(201,163,92,.10);
+    --buff:#a7bb63; --buff-bg:rgba(167,187,99,.10);
+    --rune:#5fb6c9; --rune-bg:rgba(95,182,201,.10);
+    --bench:#9aa6b3; --bench-bg:rgba(154,166,179,.10);
+    --crimson:#d05c3d;
+    --shadow:0 2px 4px rgba(0,0,0,.4), 0 16px 40px rgba(0,0,0,.5);
+    --inset:inset 0 1px 0 rgba(255,236,200,.05), inset 0 0 50px rgba(0,0,0,.4);
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
     margin:0;
-    background:radial-gradient(120% 90% at 50% -10%, #FBF6EC 0%, var(--parch) 55%, var(--parch-2) 100%) fixed;
+    background:
+      radial-gradient(140% 80% at 50% -15%, rgba(44,111,136,.16) 0%, transparent 45%),
+      radial-gradient(120% 100% at 50% 120%, rgba(138,106,47,.12) 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%) fixed;
     color:var(--ink);
-    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    line-height:1.55;-webkit-font-smoothing:antialiased;
+    font-family:"EB Garamond",Georgia,serif;
+    font-size:18px; line-height:1.5; -webkit-font-smoothing:antialiased;
+    min-height:100vh;
   }
-  .wrap{max-width:1040px;margin:0 auto;padding:clamp(20px,4vw,56px) clamp(16px,4vw,32px) 80px}
+  /* fine grain + vignette overlays */
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.045; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  body::after{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:2;
+    box-shadow:inset 0 0 180px 40px rgba(0,0,0,.7);
+  }
+  .wrap{position:relative; z-index:3; max-width:1080px; margin:0 auto; padding:clamp(28px,5vw,64px) clamp(16px,4vw,32px) 90px}
 
-  header{margin-bottom:30px}
+  /* ---------- header ---------- */
+  header{margin-bottom:30px; text-align:center}
   .eyebrow{
-    font-family:"Spline Sans Mono",monospace;font-weight:600;font-size:.72rem;
-    letter-spacing:.22em;text-transform:uppercase;color:var(--bronze);
-    display:flex;align-items:center;gap:10px;
+    font-family:"Cinzel",serif; font-weight:600; font-size:.74rem;
+    letter-spacing:.42em; text-transform:uppercase; color:var(--gold);
+    display:inline-flex; align-items:center; gap:14px; margin:0 auto;
   }
-  .eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent)}
-  h1{font-family:"Fraunces",Georgia,serif;font-weight:640;font-size:clamp(2.1rem,6vw,3.4rem);
-     line-height:1.02;letter-spacing:-.01em;margin:.35em 0 .15em}
-  h1 .glow{color:var(--verisium)}
-  .lede{max-width:66ch;color:var(--ink-soft);font-size:1.02rem;margin:0}
-  .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;font-family:"Spline Sans Mono",monospace;font-size:.72rem}
-  .meta span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--ink-soft)}
-  .meta b{color:var(--ink);font-weight:600}
+  .eyebrow::before,.eyebrow::after{content:""; width:clamp(20px,8vw,70px); height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold-deep),transparent)}
+  h1{font-family:"Cinzel",serif; font-weight:700; font-size:clamp(2rem,6vw,3.5rem);
+     line-height:1.06; letter-spacing:.01em; margin:.5em 0 .12em; color:#f2e6cd;
+     text-shadow:0 2px 18px rgba(0,0,0,.6), 0 0 1px rgba(239,212,151,.3)}
+  h1 .glow{color:var(--gold);
+     background:linear-gradient(180deg,var(--gold-hi),var(--gold) 55%,var(--gold-deep));
+     -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+     text-shadow:0 0 26px rgba(201,163,92,.28)}
+  .ornament{display:flex; align-items:center; justify-content:center; gap:14px; margin:18px 0 16px; color:var(--gold-deep)}
+  .ornament::before,.ornament::after{content:""; width:min(34vw,180px); height:1px;
+    background:linear-gradient(90deg,transparent,var(--line-hi) 30%,var(--gold-deep))}
+  .ornament::after{transform:scaleX(-1)}
+  .ornament svg{width:18px; height:18px; color:var(--gold)}
+  .lede{max-width:70ch; margin:0 auto; color:var(--ink-soft); font-size:1.12rem; line-height:1.62}
+  .lede strong{color:var(--gold); font-weight:600}
+  .meta{margin-top:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+    font-family:"Spline Sans Mono",monospace; font-size:.7rem}
+  .meta span{background:rgba(0,0,0,.25); border:1px solid var(--line); border-radius:999px;
+    padding:5px 12px; color:var(--ink-faint); letter-spacing:.02em}
+  .meta b{color:var(--gold); font-weight:600}
 
+  /* ---------- console / legend ---------- */
   .console{
-    margin:26px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;
-    padding:16px;box-shadow:var(--shadow);display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+    margin:30px 0 8px; background:linear-gradient(180deg,var(--stone-2),var(--stone));
+    border:1px solid var(--line); border-radius:4px; padding:16px 18px;
+    box-shadow:var(--shadow),var(--inset);
+    display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;
+    position:relative;
   }
-  .legend{display:flex;flex-wrap:wrap;gap:8px}
-  .key{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;font-weight:500;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff}
-  .dot{width:11px;height:11px;border-radius:3px;flex:none}
-  .dot.book{background:var(--bronze)} .dot.buff{background:var(--olive)} .dot.rune{background:var(--verisium)} .dot.bench{background:var(--slate)}
-  .controls{display:flex;gap:8px}
-  .btn{font-family:"Spline Sans Mono",monospace;font-weight:600;font-size:.74rem;letter-spacing:.04em;text-transform:uppercase;
-       cursor:pointer;background:var(--ink);color:var(--parch);border:1px solid var(--ink);padding:8px 13px;border-radius:9px;transition:transform .12s ease}
-  .btn.ghost{background:#fff;color:var(--ink);border-color:var(--line-strong)}
-  .btn:hover{transform:translateY(-1px)} .btn:active{transform:translateY(0)}
-  .btn:focus-visible{outline:2px solid var(--verisium);outline-offset:2px}
+  .console::before,.console::after{content:""; position:absolute; width:8px; height:8px; border:1px solid var(--gold-deep)}
+  .console::before{top:5px; left:5px; border-right:none; border-bottom:none}
+  .console::after{bottom:5px; right:5px; border-left:none; border-top:none}
+  .legend{display:flex; flex-wrap:wrap; gap:9px}
+  .key{display:inline-flex; align-items:center; gap:9px; font-size:.86rem; color:var(--ink-soft);
+    padding:6px 13px; border-radius:3px; border:1px solid var(--line); background:rgba(0,0,0,.22)}
+  .gem{width:11px; height:11px; flex:none; transform:rotate(45deg); border:1px solid rgba(0,0,0,.4)}
+  .gem.book{background:var(--book); box-shadow:0 0 9px var(--book)}
+  .gem.buff{background:var(--buff); box-shadow:0 0 9px var(--buff)}
+  .gem.rune{background:var(--rune); box-shadow:0 0 9px var(--rune)}
+  .gem.bench{background:var(--bench); box-shadow:0 0 9px var(--bench)}
+  .controls{display:flex; gap:9px}
+  .btn{font-family:"Cinzel",serif; font-weight:600; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase;
+    cursor:pointer; color:var(--bg); border:1px solid var(--gold-deep); padding:9px 15px; border-radius:3px;
+    background:linear-gradient(180deg,var(--gold-hi),var(--gold) 60%,var(--gold-deep));
+    transition:transform .12s ease, box-shadow .2s ease}
+  .btn.ghost{background:rgba(0,0,0,.25); color:var(--gold); border-color:var(--line-hi)}
+  .btn:hover{transform:translateY(-1px); box-shadow:0 4px 16px rgba(201,163,92,.25)}
+  .btn:active{transform:translateY(0)}
+  .btn:focus-visible{outline:2px solid var(--rune); outline-offset:2px}
 
-  .act{background:var(--surface);border:1px solid var(--line);border-radius:18px;margin-top:16px;overflow:hidden;box-shadow:var(--shadow)}
-  .act>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:16px;padding:18px clamp(16px,3vw,24px);user-select:none}
+  /* ---------- act panels ---------- */
+  .act{
+    background:linear-gradient(180deg,rgba(28,22,18,.9),rgba(18,14,11,.95));
+    border:1px solid var(--line); border-radius:5px; margin-top:18px; overflow:hidden;
+    box-shadow:var(--shadow); position:relative;
+    opacity:0; transform:translateY(16px); animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  .act::before{content:""; position:absolute; inset:0 0 auto 0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold-deep) 50%,transparent); opacity:.6}
+  .act:nth-of-type(1){animation-delay:.05s}.act:nth-of-type(2){animation-delay:.12s}
+  .act:nth-of-type(3){animation-delay:.19s}.act:nth-of-type(4){animation-delay:.26s}
+  .act:nth-of-type(5){animation-delay:.33s}.act:nth-of-type(6){animation-delay:.4s}
+  @keyframes rise{to{opacity:1; transform:none}}
+  .act>summary{list-style:none; cursor:pointer; display:flex; align-items:center; gap:18px;
+    padding:18px clamp(16px,3vw,26px); user-select:none; transition:background .2s ease}
+  .act>summary:hover{background:rgba(201,163,92,.04)}
   .act>summary::-webkit-details-marker{display:none}
-  .act>summary:focus-visible{outline:2px solid var(--verisium);outline-offset:-4px;border-radius:14px}
-  .numeral{font-family:"Fraunces",serif;font-weight:560;font-size:1.4rem;width:50px;height:50px;flex:none;display:grid;place-items:center;
-           border-radius:12px;background:var(--parch-2);color:var(--bronze);border:1px solid var(--line-strong);line-height:1;text-align:center}
-  .numeral small{display:block;font-family:"Spline Sans Mono",monospace;font-size:.46rem;letter-spacing:.06em;color:var(--ink-soft);margin-top:3px}
-  .act-title{flex:1;min-width:0}
-  .act-title h2{font-family:"Fraunces",serif;font-weight:600;font-size:1.32rem;margin:0;letter-spacing:-.01em}
-  .act-title p{margin:2px 0 0;color:var(--ink-soft);font-size:.86rem}
-  .chev{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line-strong);color:var(--ink-soft);transition:transform .25s ease}
-  .act[open] .chev{transform:rotate(180deg);color:var(--verisium);border-color:var(--verisium)}
-  .chev svg{width:14px;height:14px}
-  .act-body{padding:4px clamp(16px,3vw,24px) 22px;border-top:1px solid var(--line)}
+  .act>summary:focus-visible{outline:2px solid var(--rune); outline-offset:-4px; border-radius:4px}
+  .numeral{font-family:"Cinzel",serif; font-weight:700; font-size:1.5rem; width:56px; height:56px; flex:none;
+    display:grid; place-items:center; border-radius:4px; color:var(--gold-hi); line-height:1;
+    background:radial-gradient(circle at 50% 30%,rgba(201,163,92,.18),rgba(0,0,0,.35));
+    border:1px solid var(--gold-deep); box-shadow:inset 0 0 18px rgba(0,0,0,.6), 0 0 14px rgba(201,163,92,.1);
+    text-shadow:0 0 12px rgba(239,212,151,.4)}
+  .numeral small{display:block; font-family:"Spline Sans Mono",monospace; font-size:.42rem; font-weight:600;
+    letter-spacing:.08em; color:var(--ink-faint); margin-top:4px; text-shadow:none}
+  .act-title{flex:1; min-width:0}
+  .act-title h2{font-family:"Cinzel",serif; font-weight:600; font-size:1.28rem; margin:0; color:#f0e3c8;
+    letter-spacing:.01em}
+  .act-title p{margin:4px 0 0; color:var(--ink-faint); font-size:.92rem; font-style:italic}
+  .chev{flex:none; width:32px; height:32px; border-radius:50%; display:grid; place-items:center;
+    border:1px solid var(--line-hi); color:var(--ink-soft); transition:transform .3s ease, color .3s, border-color .3s}
+  .act[open] .chev{transform:rotate(180deg); color:var(--gold); border-color:var(--gold-deep)}
+  .chev svg{width:14px; height:14px}
+  .act-body{padding:6px clamp(16px,3vw,30px) 28px; border-top:1px solid var(--line)}
   .routenote{
-    margin:16px 0 4px;font-size:.82rem;color:var(--ink-soft);background:var(--verisium-bg);
-    border:1px solid #bcd6de;border-radius:10px;padding:9px 13px;
+    margin:18px 0 6px; font-size:.95rem; color:var(--ink-soft); line-height:1.5;
+    background:linear-gradient(180deg,var(--rune-bg),transparent); border:1px solid rgba(95,182,201,.28);
+    border-left:3px solid var(--rune); border-radius:3px; padding:11px 15px;
   }
-  .routenote b{color:var(--verisium)}
+  .routenote b{color:var(--rune); font-weight:600}
 
-  table{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:14px}
-  thead th{text-align:left;font-family:"Spline Sans Mono",monospace;font-weight:600;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
-           color:var(--ink-soft);padding:6px 12px;border-bottom:1px solid var(--line-strong)}
-  tbody td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-  tbody tr:last-child td{border-bottom:none}
-  tbody tr.book>td:first-child{border-left:3px solid var(--bronze)}
-  tbody tr.buff>td:first-child{border-left:3px solid var(--olive)}
-  tbody tr.rune>td:first-child{border-left:3px solid var(--verisium)}
-  tbody tr.bench>td:first-child{border-left:3px solid var(--slate)}
-  tbody tr.book:hover td{background:var(--bronze-bg)}
-  tbody tr.buff:hover td{background:var(--olive-bg)}
-  tbody tr.rune:hover td{background:var(--verisium-bg)}
-  tbody tr.bench:hover td{background:var(--slate-bg)}
-  .lvl{font-family:"Spline Sans Mono",monospace;font-weight:600;font-size:.78rem;color:var(--ink);
-       background:var(--parch-2);border:1px solid var(--line-strong);border-radius:7px;padding:3px 8px;white-space:nowrap;display:inline-block}
-  td.zone{font-weight:600}
-  .pill{font-family:"Spline Sans Mono",monospace;font-size:.58rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-        padding:2px 6px;border-radius:5px;margin-right:7px;vertical-align:1px;border:1px solid;white-space:nowrap}
-  .pill.book{color:var(--bronze);background:var(--bronze-bg);border-color:#E2Cfa3}
-  .pill.buff{color:var(--olive);background:var(--olive-bg);border-color:#cdd8a8}
-  .pill.rune{color:var(--verisium);background:var(--verisium-bg);border-color:#b9d4dc}
-  .pill.bench{color:var(--slate);background:var(--slate-bg);border-color:#c4c9cf}
-  .or{color:var(--ink-soft);font-style:italic}
-  .tag{display:inline-block;font-family:"Spline Sans Mono",monospace;font-size:.58rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-       padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:1px}
-  .tag.gate{color:#fff;background:var(--verisium)}
-  .tag.pick{color:var(--bronze);background:var(--bronze-bg);border:1px solid #E2Cfa3}
+  /* ---------- timeline ---------- */
+  .timeline{position:relative; list-style:none; margin:18px 0 2px; padding:6px 0}
+  .timeline::before{content:""; position:absolute; left:78px; top:18px; bottom:18px; width:2px;
+    background:linear-gradient(180deg,transparent,var(--gold-deep) 8%,var(--gold-deep) 92%,transparent)}
+  .tl{position:relative; display:grid; grid-template-columns:56px 1fr; gap:0 44px; padding:11px 0; align-items:start}
+  .tl-lvl{justify-self:end; padding-top:3px}
+  .tl::before{content:""; position:absolute; left:78px; top:18px; width:15px; height:15px;
+    transform:translateX(-50%) rotate(45deg); background:var(--stone-hi); border:1.5px solid var(--ink-faint);
+    box-shadow:0 0 0 4px var(--bg); transition:transform .2s ease, box-shadow .25s ease}
+  .tl.book::before{border-color:var(--book); box-shadow:0 0 0 4px var(--bg),0 0 12px var(--book)}
+  .tl.buff::before{border-color:var(--buff); box-shadow:0 0 0 4px var(--bg),0 0 12px var(--buff)}
+  .tl.rune::before{border-color:var(--rune); box-shadow:0 0 0 4px var(--bg),0 0 12px var(--rune)}
+  .tl.bench::before{border-color:var(--bench); box-shadow:0 0 0 4px var(--bg),0 0 12px var(--bench)}
 
-  .notes{margin-top:34px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,3vw,24px);box-shadow:var(--shadow)}
-  .notes h3{font-family:"Fraunces",serif;font-weight:600;font-size:1.1rem;margin:0 0 12px}
-  .notes ul{margin:0;padding-left:1.1em;color:var(--ink-soft);font-size:.9rem}
-  .notes li{margin:7px 0} .notes b{color:var(--ink)}
-  footer{margin-top:26px;text-align:center;color:var(--ink-soft);font-size:.78rem;line-height:1.7}
+  .lvl{font-family:"Spline Sans Mono",monospace; font-weight:600; font-size:.76rem; color:var(--gold-hi);
+    background:rgba(0,0,0,.3); border:1px solid var(--gold-deep); border-radius:4px; padding:3px 8px;
+    white-space:nowrap; display:inline-block; line-height:1.3}
+
+  .tl-card{grid-column:2; background:linear-gradient(180deg,rgba(36,28,21,.5),rgba(0,0,0,.18));
+    border:1px solid var(--line); border-left:3px solid var(--line-hi); border-radius:4px;
+    padding:11px 16px; transition:transform .18s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease}
+  .tl.book .tl-card{border-left-color:var(--book)} .tl.buff .tl-card{border-left-color:var(--buff)}
+  .tl.rune .tl-card{border-left-color:var(--rune)} .tl.bench .tl-card{border-left-color:var(--bench)}
+  .tl:hover .tl-card{transform:translateX(3px); background:linear-gradient(180deg,rgba(48,38,28,.6),rgba(0,0,0,.1));
+    border-color:var(--line-hi); box-shadow:-6px 6px 22px rgba(0,0,0,.35)}
+  .tl:hover::before{transform:translateX(-50%) rotate(45deg) scale(1.18)}
+
+  .tl-top{display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:3px}
+  .tl-zone{font-family:"Cinzel",serif; font-weight:500; font-size:.96rem; color:#ecdfc3; letter-spacing:.01em}
+  .tl-zone .sub{font-family:"Spline Sans Mono",monospace; font-size:.62rem; color:var(--ink-faint); margin-left:5px}
+  .tl-reward{font-size:1.04rem; color:var(--ink); line-height:1.45}
+  .tl-reward b{color:var(--gold-hi); font-weight:600}
+  .tl-act{margin-top:3px; font-size:.94rem; color:var(--ink-soft); font-style:italic; line-height:1.46}
+  .tl-act b{color:var(--ink); font-weight:600; font-style:normal}
+
+  .pill{font-family:"Spline Sans Mono",monospace; font-size:.56rem; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; padding:3px 8px; border-radius:3px; border:1px solid; white-space:nowrap}
+  .pill.book{color:var(--book); background:var(--book-bg); border-color:rgba(217,177,95,.4)}
+  .pill.buff{color:var(--buff); background:var(--buff-bg); border-color:rgba(167,187,99,.4)}
+  .pill.rune{color:var(--rune); background:var(--rune-bg); border-color:rgba(95,182,201,.4)}
+  .pill.bench{color:var(--bench); background:var(--bench-bg); border-color:rgba(154,166,179,.4)}
+  .or{color:var(--ink-faint); font-style:italic}
+  .tag{display:inline-block; font-family:"Spline Sans Mono",monospace; font-size:.56rem; font-weight:600;
+    letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:3px; margin-left:7px;
+    vertical-align:1px}
+  .tag.gate{color:#fff; background:linear-gradient(180deg,#e0714f,var(--crimson)); border:1px solid #8f3a26;
+    box-shadow:0 0 12px rgba(208,92,61,.4)}
+  .tag.pick{color:var(--gold); background:rgba(201,163,92,.12); border:1px solid var(--gold-deep)}
+
+  /* ---------- notes / footer ---------- */
+  .notes{margin-top:40px; background:linear-gradient(180deg,var(--stone-2),var(--stone));
+    border:1px solid var(--line); border-radius:5px; padding:clamp(18px,3vw,28px); box-shadow:var(--shadow),var(--inset)}
+  .notes h3{font-family:"Cinzel",serif; font-weight:600; font-size:1.12rem; margin:0 0 14px; color:var(--gold);
+    display:flex; align-items:center; gap:10px}
+  .notes h3::before{content:""; width:10px; height:10px; transform:rotate(45deg);
+    background:var(--gold); box-shadow:0 0 10px var(--gold)}
+  .notes ul{margin:0; padding-left:1.2em; color:var(--ink-soft); font-size:1rem}
+  .notes li{margin:9px 0; line-height:1.55} .notes li::marker{color:var(--gold-deep)}
+  .notes b{color:var(--gold-hi)} .notes i{color:var(--ink)}
+  footer{margin-top:30px; text-align:center; color:var(--ink-faint); font-size:.84rem; line-height:1.8;
+    font-style:italic}
+  footer b{color:var(--ink-soft); font-style:normal}
+  .disclaimer{margin-top:22px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:.74rem; font-style:normal; line-height:1.7; color:#6a5f49; max-width:72ch;
+    margin-left:auto; margin-right:auto}
 
   @media (max-width:680px){
+    body{font-size:17px}
+    header{text-align:center}
     .console{justify-content:flex-start}
-    .numeral{width:44px;height:44px;font-size:1.15rem}
-    table{font-size:.88rem}
-    thead{display:none}
-    tbody td{display:block;border:none;padding:2px 0}
-    tbody tr{display:block;padding:13px 0 13px 11px;border-bottom:1px solid var(--line)}
-    tbody tr.book{border-left:3px solid var(--bronze)}
-    tbody tr.buff{border-left:3px solid var(--olive)}
-    tbody tr.rune{border-left:3px solid var(--verisium)}
-    tbody tr.bench{border-left:3px solid var(--slate)}
-    tbody tr.book>td:first-child,tbody tr.buff>td:first-child,tbody tr.rune>td:first-child,tbody tr.bench>td:first-child{border-left:none}
-    td.lvlcell{margin-bottom:4px}
-    td.zone::before,td.reward::before,td.action::before{
-      content:attr(data-l);display:block;font-family:"Spline Sans Mono",monospace;font-size:.58rem;
-      letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:1px;
-    }
+    .numeral{width:48px; height:48px; font-size:1.2rem}
+    .timeline::before{left:48px}
+    .tl{grid-template-columns:34px 1fr; gap:0 28px}
+    .tl::before{left:48px}
+    .tl-lvl{justify-self:start}
+    .tl-lvl .lvl{font-size:.68rem; padding:2px 5px}
   }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important; scroll-behavior:auto}
+    .act{opacity:1; transform:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">Path of Exile 2 · 0.5.0 Return of the Ancients</div>
-    <h1>Permanent rewards,<br><span class="glow">ordered by zone level.</span></h1>
-    <p class="lede">Every life-of-the-character campaign reward — Books of Specialisation, permanent stat buffs &amp; abilities, crafting-bench unlocks, and the <strong>Runes of Aldur</strong> (Runeseeker) chain — sorted within each act by the zone's area level, so it doubles as a clean leveling route. Grab top-to-bottom and skip everything else.</p>
+    <div class="eyebrow">Path of Exile 2 · 0.5.0 · Leveling Plan</div>
+    <h1>The Permanent-Rewards<br><span class="glow">Leveling Plan</span></h1>
+    <div class="ornament" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+    </div>
+    <p class="lede">A campaign leveling plan built around every life-of-the-character reward — Books of Specialisation, permanent stat buffs &amp; abilities, crafting-bench unlocks, and the <strong>Runes of Aldur</strong> (Runeseeker) chain — sorted within each act by the zone's area level. Follow it act by act, grab each entry top-to-bottom as you reach its level, and skip everything else.</p>
     <div class="meta">
       <span>League: <b>Runes of Aldur</b></span>
       <span>Patch <b>0.5.x</b></span>
@@ -149,10 +244,10 @@
 
   <div class="console">
     <div class="legend">
-      <span class="key"><span class="dot book"></span>Book / Skill Points</span>
-      <span class="key"><span class="dot buff"></span>Permanent Buff / Ability</span>
-      <span class="key"><span class="dot rune"></span>Runes of Aldur (league)</span>
-      <span class="key"><span class="dot bench"></span>Crafting Bench (1st char)</span>
+      <span class="key"><span class="gem book"></span>Book / Skill Points</span>
+      <span class="key"><span class="gem buff"></span>Permanent Buff / Ability</span>
+      <span class="key"><span class="gem rune"></span>Runes of Aldur (league)</span>
+      <span class="key"><span class="gem bench"></span>Crafting Bench (1st char)</span>
     </div>
     <div class="controls">
       <button class="btn ghost" id="collapseAll">Collapse all</button>
@@ -168,22 +263,19 @@
       <div class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></div>
     </summary>
     <div class="act-body">
-      <table>
-        <thead><tr><th>Lvl</th><th>Zone</th><th>Reward</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">2–3</span></td><td class="zone" data-l="Zone">Clearfell</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Starts the Runeseeker quest + Tome</td><td class="action" data-l="Action">Talk to <b>Farrow</b>, inscribe runes, kill the pack that spawns</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">2–3</span></td><td class="zone" data-l="Zone">Clearfell</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+10% Cold Resistance</td><td class="action" data-l="Action">Kill <b>Beira of the Rotten Pack</b> (north)</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">6</span></td><td class="zone" data-l="Zone">Grim Tangle</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone (1 of 3)</td><td class="action" data-l="Action">Interact with the runestone (on the main path)</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">10</span></td><td class="zone" data-l="Zone">Hunting Grounds</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>Book of Specialisation</td><td class="action" data-l="Action">Kill <b>The Crowbell</b></td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">10</span></td><td class="zone" data-l="Zone">Hunting Grounds</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone (2 of 3)</td><td class="action" data-l="Action">Interact with the runestone</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">11–12</span></td><td class="zone" data-l="Zone">Freythorn</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+30 Spirit</td><td class="action" data-l="Action">Activate 3 Ritual Altars, kill <b>The King in the Mists</b></td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">12</span></td><td class="zone" data-l="Zone">Ogham Farmlands</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>Book of Specialisation</td><td class="action" data-l="Action"><b>The Lost Lute</b> — grab Una's lute here, return it to Una in town</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">12</span></td><td class="zone" data-l="Zone">Ogham Farmlands</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone (3 of 3)</td><td class="action" data-l="Action">Interact with the runestone (in a crop field)</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">~12</span></td><td class="zone" data-l="Zone">Grelwood → Lost Catacombs → Clearfell</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Verisium Anvil — Armour Runeforging <span class="tag gate">Required</span></td><td class="action" data-l="Action">After all 3 runestones: summon Farrow at the <b>Tree of Souls</b>, clear the Catacombs, take Liquid Verisium, return to town</td></tr>
-          <tr class="bench"><td class="lvlcell" data-l="Lvl"><span class="lvl">12–13</span></td><td class="zone" data-l="Zone">Ogham Village</td><td class="reward" data-l="Reward"><span class="pill bench">Bench</span>Salvage Bench <span class="tag pick">1st char</span></td><td class="action" data-l="Action">Pick up the <b>Smithing Tools</b> in the smithing house (off the cobble road)</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">13–14</span></td><td class="zone" data-l="Zone">Ogham Manor</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+20 Maximum Life</td><td class="action" data-l="Action">Kill <b>Candlemass, the Living Rite</b> (1st floor)</td></tr>
-        </tbody>
-      </table>
+      <ul class="timeline">
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">2–3</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Clearfell</span></div><div class="tl-reward">Starts the Runeseeker quest + Tome</div><div class="tl-act">Talk to <b>Farrow</b>, inscribe runes, kill the pack that spawns</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">2–3</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Clearfell</span></div><div class="tl-reward">+10% Cold Resistance</div><div class="tl-act">Kill <b>Beira of the Rotten Pack</b> (north)</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">6</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Grim Tangle</span></div><div class="tl-reward">Runestone (1 of 3)</div><div class="tl-act">Interact with the runestone (on the main path)</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">10</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Hunting Grounds</span></div><div class="tl-reward">Book of Specialisation</div><div class="tl-act">Kill <b>The Crowbell</b></div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">10</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Hunting Grounds</span></div><div class="tl-reward">Runestone (2 of 3)</div><div class="tl-act">Interact with the runestone</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">11–12</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Freythorn</span></div><div class="tl-reward">+30 Spirit</div><div class="tl-act">Activate 3 Ritual Altars, kill <b>The King in the Mists</b></div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">12</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Ogham Farmlands</span></div><div class="tl-reward">Book of Specialisation</div><div class="tl-act"><b>The Lost Lute</b> — grab Una's lute here, return it to Una in town</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">12</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Ogham Farmlands</span></div><div class="tl-reward">Runestone (3 of 3)</div><div class="tl-act">Interact with the runestone (in a crop field)</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">~12</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Grelwood → Lost Catacombs → Clearfell</span></div><div class="tl-reward">Verisium Anvil — Armour Runeforging <span class="tag gate">Required</span></div><div class="tl-act">After all 3 runestones: summon Farrow at the <b>Tree of Souls</b>, clear the Catacombs, take Liquid Verisium, return to town</div></div></li>
+        <li class="tl bench"><span class="tl-lvl"><span class="lvl">12–13</span></span><div class="tl-card"><div class="tl-top"><span class="pill bench">Bench</span><span class="tl-zone">Ogham Village</span></div><div class="tl-reward">Salvage Bench <span class="tag pick">1st char</span></div><div class="tl-act">Pick up the <b>Smithing Tools</b> in the smithing house (off the cobble road)</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">13–14</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Ogham Manor</span></div><div class="tl-reward">+20 Maximum Life</div><div class="tl-act">Kill <b>Candlemass, the Living Rite</b> (1st floor)</div></div></li>
+      </ul>
     </div>
   </details>
 
@@ -195,20 +287,17 @@
       <div class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></div>
     </summary>
     <div class="act-body">
-      <table>
-        <thead><tr><th>Lvl</th><th>Zone</th><th>Reward</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">17</span></td><td class="zone" data-l="Zone">Traitor's Passage</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>First Ascendancy unlocked</td><td class="action" data-l="Action">Kill <b>Balbala, the Traitor</b>, then run the Trial (many delay this to ~Lvl 28)</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">20–21</span></td><td class="zone" data-l="Zone">The Bone Pits</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone</td><td class="action" data-l="Action">Interact with the runestone (summons Farrow)</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">22</span></td><td class="zone" data-l="Zone">Keth</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>Book of Specialisation</td><td class="action" data-l="Action">Kill <b>Kabala, Constrictor Queen</b> (the Venom Pit)</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">22</span></td><td class="zone" data-l="Zone">Keth</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone</td><td class="action" data-l="Action">Interact with the runestone</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">25</span></td><td class="zone" data-l="Zone">Valley of the Titans</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+1 Charm Slot, &amp; +30% Charm Charges <span class="or">or</span> +30% Charm Effect Duration <span class="tag pick">Changeable</span></td><td class="action" data-l="Action"><b>Ancient Vows</b> — find 3 Ancient Seals, place both relics on the Relic Altar</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">26–27</span></td><td class="zone" data-l="Zone">Deshar</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>Book of Specialisation</td><td class="action" data-l="Action"><b>Tradition's Toll</b> — loot Fallen Dekhara, deliver the letter to Shambrin</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">26–27</span></td><td class="zone" data-l="Zone">Deshar</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone</td><td class="action" data-l="Action">Interact with the runestone (summons Farrow)</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">~27</span></td><td class="zone" data-l="Zone">Skull of the Titan</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Unlocks Runic Inscriptions</td><td class="action" data-l="Action">From Deshar, ride the caravan, clear the Runic Vault via the cave mouth</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">27</span></td><td class="zone" data-l="Zone">The Spires of Deshar</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+10% Lightning Resistance</td><td class="action" data-l="Action">Interact with the <b>Sisters of Garukhan</b> shrine</td></tr>
-        </tbody>
-      </table>
+      <ul class="timeline">
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">17</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Traitor's Passage</span></div><div class="tl-reward">First Ascendancy unlocked</div><div class="tl-act">Kill <b>Balbala, the Traitor</b>, then run the Trial (many delay this to ~Lvl 28)</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">20–21</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">The Bone Pits</span></div><div class="tl-reward">Runestone</div><div class="tl-act">Interact with the runestone (summons Farrow)</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">22</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Keth</span></div><div class="tl-reward">Book of Specialisation</div><div class="tl-act">Kill <b>Kabala, Constrictor Queen</b> (the Venom Pit)</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">22</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Keth</span></div><div class="tl-reward">Runestone</div><div class="tl-act">Interact with the runestone</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">25</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Valley of the Titans</span></div><div class="tl-reward">+1 Charm Slot, &amp; +30% Charm Charges <span class="or">or</span> +30% Charm Effect Duration <span class="tag pick">Changeable</span></div><div class="tl-act"><b>Ancient Vows</b> — find 3 Ancient Seals, place both relics on the Relic Altar</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">26–27</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Deshar</span></div><div class="tl-reward">Book of Specialisation</div><div class="tl-act"><b>Tradition's Toll</b> — loot Fallen Dekhara, deliver the letter to Shambrin</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">26–27</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Deshar</span></div><div class="tl-reward">Runestone</div><div class="tl-act">Interact with the runestone (summons Farrow)</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">~27</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Skull of the Titan</span></div><div class="tl-reward">Unlocks Runic Inscriptions</div><div class="tl-act">From Deshar, ride the caravan, clear the Runic Vault via the cave mouth</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">27</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">The Spires of Deshar</span></div><div class="tl-reward">+10% Lightning Resistance</div><div class="tl-act">Interact with the <b>Sisters of Garukhan</b> shrine</div></div></li>
+      </ul>
     </div>
   </details>
 
@@ -221,22 +310,19 @@
     </summary>
     <div class="act-body">
       <div class="routenote"><b>Heads-up:</b> Act 3's 0.5 routing isn't strictly level-ordered — you actually enter the <b>Venom Crypts</b> (area Lvl 35) right after Jungle Ruins, so grab its runestone &amp; Orok Poison on that early pass even though it sorts lower here.</div>
-      <table>
-        <thead><tr><th>Lvl</th><th>Zone</th><th>Reward</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">30–31</span></td><td class="zone" data-l="Zone">Jungle Ruins</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>Book of Specialisation</td><td class="action" data-l="Action">Kill <b>Mighty Silverfist</b></td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">30–31</span></td><td class="zone" data-l="Zone">Jungle Ruins</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone + meet Farrow</td><td class="action" data-l="Action">Talk to Farrow at the entrance, activate the runestone</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">32–33</span></td><td class="zone" data-l="Zone">Chimeral Wetlands</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>Second Ascendancy unlocked</td><td class="action" data-l="Action">Kill <b>Xyclucian, the Chimera</b>, then run the Trial of Chaos</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">33</span></td><td class="zone" data-l="Zone">Jiquani's Machinarium</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+10% Fire Resistance</td><td class="action" data-l="Action">Open the Blackjaw door, kill <b>Blackjaw, the Remnant</b>, use the Flame Core</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">33–34</span></td><td class="zone" data-l="Zone">The Azak Bog</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+30 Spirit</td><td class="action" data-l="Action">Kill <b>Ignagduk, the Bog Witch</b>, use the Gemrot Skull</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">33–34</span></td><td class="zone" data-l="Zone">The Azak Bog</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone</td><td class="action" data-l="Action">Talk to Farrow, activate the runestone (side zone off the Matlan Waterways)</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">35</span></td><td class="zone" data-l="Zone">The Venom Crypts</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+25% Stun Threshold <span class="or">or</span> +30% Elemental Ailment Threshold <span class="or">or</span> +25% Mana Regen <span class="tag pick">Permanent</span></td><td class="action" data-l="Action"><b>The Slithering Dead</b> — loot Orok Poison, hand it to Servi in town (cannot change later)</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">35</span></td><td class="zone" data-l="Zone">The Venom Crypts</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Runestone</td><td class="action" data-l="Action">Activate the runestone</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">~34</span></td><td class="zone" data-l="Zone">Infested Barrens → Mystic Refuge</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Unlocks Unique Verisium Runeforging</td><td class="action" data-l="Action">After all 3 runestones: clear the Mystic Refuge vault, talk to Farrow</td></tr>
-          <tr class="bench"><td class="lvlcell" data-l="Lvl"><span class="lvl">36</span></td><td class="zone" data-l="Zone">The Molten Vault</td><td class="reward" data-l="Reward"><span class="pill bench">Bench</span>Reforging Bench <span class="tag pick">1st char</span></td><td class="action" data-l="Action">Kill <b>Mektul, the Forgemaster</b>, return the Hammer of Kamasa to Oswald in town</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">39–40</span></td><td class="zone" data-l="Zone">Aggorat</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>+2 Skill Points (quest item)</td><td class="action" data-l="Action"><b>Sacrificial Heart</b> — farm the heart from Vaal Goliaths (Utzaal/Aggorat), use it on the Sacrificial Altar</td></tr>
-        </tbody>
-      </table>
+      <ul class="timeline">
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">30–31</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Jungle Ruins</span></div><div class="tl-reward">Book of Specialisation</div><div class="tl-act">Kill <b>Mighty Silverfist</b></div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">30–31</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Jungle Ruins</span></div><div class="tl-reward">Runestone + meet Farrow</div><div class="tl-act">Talk to Farrow at the entrance, activate the runestone</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">32–33</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Chimeral Wetlands</span></div><div class="tl-reward">Second Ascendancy unlocked</div><div class="tl-act">Kill <b>Xyclucian, the Chimera</b>, then run the Trial of Chaos</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">33</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Jiquani's Machinarium</span></div><div class="tl-reward">+10% Fire Resistance</div><div class="tl-act">Open the Blackjaw door, kill <b>Blackjaw, the Remnant</b>, use the Flame Core</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">33–34</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">The Azak Bog</span></div><div class="tl-reward">+30 Spirit</div><div class="tl-act">Kill <b>Ignagduk, the Bog Witch</b>, use the Gemrot Skull</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">33–34</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">The Azak Bog</span></div><div class="tl-reward">Runestone</div><div class="tl-act">Talk to Farrow, activate the runestone (side zone off the Matlan Waterways)</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">35</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">The Venom Crypts</span></div><div class="tl-reward">+25% Stun Threshold <span class="or">or</span> +30% Elemental Ailment Threshold <span class="or">or</span> +25% Mana Regen <span class="tag pick">Permanent</span></div><div class="tl-act"><b>The Slithering Dead</b> — loot Orok Poison, hand it to Servi in town (cannot change later)</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">35</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">The Venom Crypts</span></div><div class="tl-reward">Runestone</div><div class="tl-act">Activate the runestone</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">~34</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Infested Barrens → Mystic Refuge</span></div><div class="tl-reward">Unlocks Unique Verisium Runeforging</div><div class="tl-act">After all 3 runestones: clear the Mystic Refuge vault, talk to Farrow</div></div></li>
+        <li class="tl bench"><span class="tl-lvl"><span class="lvl">36</span></span><div class="tl-card"><div class="tl-top"><span class="pill bench">Bench</span><span class="tl-zone">The Molten Vault</span></div><div class="tl-reward">Reforging Bench <span class="tag pick">1st char</span></div><div class="tl-act">Kill <b>Mektul, the Forgemaster</b>, return the Hammer of Kamasa to Oswald in town</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">39–40</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Aggorat</span></div><div class="tl-reward">+2 Skill Points (quest item)</div><div class="tl-act"><b>Sacrificial Heart</b> — farm the heart from Vaal Goliaths (Utzaal/Aggorat), use it on the Sacrificial Altar</div></div></li>
+      </ul>
     </div>
   </details>
 
@@ -249,22 +335,19 @@
     </summary>
     <div class="act-body">
       <div class="routenote"><b>Newest act:</b> island weapon-fragment &amp; map-piece spawns are <b>randomized each league</b> (Kingsmarch dialogue tells you which island), and guides still disagree on a couple of quest names — confirm in-game. See the note below on Act 4 skill points.</div>
-      <table>
-        <thead><tr><th>Lvl</th><th>Zone</th><th>Reward</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">42–43</span></td><td class="zone" data-l="Zone">Whakapanu Island</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span><b>Kaom's Lesson:</b> +30% Armour, Evasion &amp; ES <span class="or">— or —</span> <b>Rakiata's Lesson:</b> 15% of Armour also applies to Elemental Damage, Deflection = 12% of Evasion, 12% faster ES recharge start</td><td class="action" data-l="Action"><b>Tribal Medicine</b> quest</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">42–43</span></td><td class="zone" data-l="Zone">Whakapanu Island</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Torn Map Piece (1 of 4)</td><td class="action" data-l="Action">Loot the map piece on the island</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">43–44</span></td><td class="zone" data-l="Zone">Shrike Island</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Torn Map Piece (2 of 4)</td><td class="action" data-l="Action">Loot the map piece on the island</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">44</span></td><td class="zone" data-l="Zone">Abandoned Prison</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+30% Recovery for Life or Mana Flasks <span class="tag pick">Changeable</span></td><td class="action" data-l="Action"><b>Goddess of Justice</b> — open the Chapel, kill Forael, use the Flask</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">45</span></td><td class="zone" data-l="Zone">Isle of Kin</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Torn Map Piece (3 of 4)</td><td class="action" data-l="Action">Loot the map piece on the island</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">46–47</span></td><td class="zone" data-l="Zone">Eye of Hinekora</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+5% increased Maximum Mana</td><td class="action" data-l="Action"><b>Navali's Rest</b> — complete the 3 Tests, Pay Respects at the altar, talk to Navali</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">47</span></td><td class="zone" data-l="Zone">Halls of the Dead</td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span><b>Tattoo</b> — +5% Fire / Cold / Lightning Res, <span class="or">or</span> +5 Str / Dex / Int</td><td class="action" data-l="Action">Trial of Ngakanu — loot the Tattoos</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">47–48</span></td><td class="zone" data-l="Zone">Trial of the Ancestors</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>+2 Skill Points</td><td class="action" data-l="Action">Talk to Navali &amp; Hinekora</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">47–48</span></td><td class="zone" data-l="Zone">Kedge Bay</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Torn Map Piece (4 of 4)</td><td class="action" data-l="Action">Loot the map piece (Dead Man's Chest / Smuggler's Stash)</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">48–49</span></td><td class="zone" data-l="Zone">Journey's End</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>+2 Skill Points</td><td class="action" data-l="Action">Build the Totem, kill <b>Omniphobia</b>, claim the reward from Tujen in town</td></tr>
-          <tr class="rune"><td class="lvlcell" data-l="Lvl"><span class="lvl">~50</span></td><td class="zone" data-l="Zone">Plunder's Point → Deserted Post</td><td class="reward" data-l="Reward"><span class="pill rune">Rune</span>Unlocks the 13 Ancient Runes <span class="tag gate">Required</span></td><td class="action" data-l="Action">Turn in all 4 Torn Maps at Kingsmarch, run the Expedition, summon Farrow</td></tr>
-        </tbody>
-      </table>
+      <ul class="timeline">
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">42–43</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Whakapanu Island</span></div><div class="tl-reward"><b>Kaom's Lesson:</b> +30% Armour, Evasion &amp; ES <span class="or">— or —</span> <b>Rakiata's Lesson:</b> 15% of Armour also applies to Elemental Damage, Deflection = 12% of Evasion, 12% faster ES recharge start</div><div class="tl-act"><b>Tribal Medicine</b> quest</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">42–43</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Whakapanu Island</span></div><div class="tl-reward">Torn Map Piece (1 of 4)</div><div class="tl-act">Loot the map piece on the island</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">43–44</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Shrike Island</span></div><div class="tl-reward">Torn Map Piece (2 of 4)</div><div class="tl-act">Loot the map piece on the island</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">44</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Abandoned Prison</span></div><div class="tl-reward">+30% Recovery for Life or Mana Flasks <span class="tag pick">Changeable</span></div><div class="tl-act"><b>Goddess of Justice</b> — open the Chapel, kill Forael, use the Flask</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">45</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Isle of Kin</span></div><div class="tl-reward">Torn Map Piece (3 of 4)</div><div class="tl-act">Loot the map piece on the island</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">46–47</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Eye of Hinekora</span></div><div class="tl-reward">+5% increased Maximum Mana</div><div class="tl-act"><b>Navali's Rest</b> — complete the 3 Tests, Pay Respects at the altar, talk to Navali</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">47</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Halls of the Dead</span></div><div class="tl-reward"><b>Tattoo</b> — +5% Fire / Cold / Lightning Res, <span class="or">or</span> +5 Str / Dex / Int</div><div class="tl-act">Trial of Ngakanu — loot the Tattoos</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">47–48</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Trial of the Ancestors</span></div><div class="tl-reward">+2 Skill Points</div><div class="tl-act">Talk to Navali &amp; Hinekora</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">47–48</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Kedge Bay</span></div><div class="tl-reward">Torn Map Piece (4 of 4)</div><div class="tl-act">Loot the map piece (Dead Man's Chest / Smuggler's Stash)</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">48–49</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Journey's End</span></div><div class="tl-reward">+2 Skill Points</div><div class="tl-act">Build the Totem, kill <b>Omniphobia</b>, claim the reward from Tujen in town</div></div></li>
+        <li class="tl rune"><span class="tl-lvl"><span class="lvl">~50</span></span><div class="tl-card"><div class="tl-top"><span class="pill rune">Rune</span><span class="tl-zone">Plunder's Point → Deserted Post</span></div><div class="tl-reward">Unlocks the 13 Ancient Runes <span class="tag gate">Required</span></div><div class="tl-act">Turn in all 4 Torn Maps at Kingsmarch, run the Expedition, summon Farrow</div></div></li>
+      </ul>
     </div>
   </details>
 
@@ -277,19 +360,16 @@
     </summary>
     <div class="act-body">
       <div class="routenote"><b>Any order in 0.5:</b> sorted here by zone level (5.1 → 5.2 → 5.3), but most players run <b>5.3 first</b> for the early +40 Spirit, then 5.1, then 5.2.</div>
-      <table>
-        <thead><tr><th>Lvl</th><th>Zone</th><th>Reward</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">52–53</span></td><td class="zone" data-l="Zone">Wolvenhold <span style="color:var(--ink-soft);font-weight:400">(5.1)</span></td><td class="reward" data-l="Reward"><span class="pill book">Book</span>+2 Skill Points</td><td class="action" data-l="Action">Kill <b>Oswin, the Dread Warden</b>, use the Warden's Ledger</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">54–55</span></td><td class="zone" data-l="Zone">The Khari Crossing <span style="color:var(--ink-soft);font-weight:400">(5.2)</span></td><td class="reward" data-l="Reward"><span class="pill book">Book</span>+2 Skill Points</td><td class="action" data-l="Action"><b>Clearing the Way</b> — kill Akthi &amp; Anundr, talk to Risu</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">54–55</span></td><td class="zone" data-l="Zone">Molten Shrine <span style="color:var(--ink-soft);font-weight:400">(5.2)</span></td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+5% Maximum Life</td><td class="action" data-l="Action">Activate <b>Molten One's Gift</b> in the Skullmaw Stairway</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">54–55</span></td><td class="zone" data-l="Zone">Qimah <span style="color:var(--ink-soft);font-weight:400">(5.2)</span></td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span><b>1 of 7 Boons</b> — Kochai (+5 all attrs) · Halani (12% cooldown recovery) · Galai (20% presence AoE) · Ahkeli (15% global defences) · Orbala (3% move speed) · Tabana (+5% elemental res) <span class="tag pick">Changeable</span></td><td class="action" data-l="Action">Use <b>Orbala's Pillar</b> (the Seven Pillars)</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">55–58</span></td><td class="zone" data-l="Zone">Kriar Village <span style="color:var(--ink-soft);font-weight:400">(5.3)</span></td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>+40 Spirit</td><td class="action" data-l="Action">Kill <b>Lythara, the Wayward Spear</b>, use the Gemcrust Skull</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">55–58</span></td><td class="zone" data-l="Zone">Howling Caves <span style="color:var(--ink-soft);font-weight:400">(5.3)</span></td><td class="reward" data-l="Reward"><span class="pill book">Book</span>Book of Specialisation</td><td class="action" data-l="Action"><b>Howling Winds</b> — kill The Abominable Yeti, return the Icy Tusks to Hilda</td></tr>
-          <tr class="buff"><td class="lvlcell" data-l="Lvl"><span class="lvl">55–58</span></td><td class="zone" data-l="Zone">Kriar Peaks <span style="color:var(--ink-soft);font-weight:400">(5.3)</span></td><td class="reward" data-l="Reward"><span class="pill buff">Buff</span>Free Unique Item</td><td class="action" data-l="Action">Find <b>Elder Maddox</b> (around 10–11 o'clock on the map)</td></tr>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">~58</span></td><td class="zone" data-l="Zone">Kingsmarch (completion)</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>+2 Skill Points</td><td class="action" data-l="Action">After all 3 Interludes, talk to the <b>Hooded One</b></td></tr>
-        </tbody>
-      </table>
+      <ul class="timeline">
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">52–53</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Wolvenhold <span class="sub">5.1</span></span></div><div class="tl-reward">+2 Skill Points</div><div class="tl-act">Kill <b>Oswin, the Dread Warden</b>, use the Warden's Ledger</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">54–55</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">The Khari Crossing <span class="sub">5.2</span></span></div><div class="tl-reward">+2 Skill Points</div><div class="tl-act"><b>Clearing the Way</b> — kill Akthi &amp; Anundr, talk to Risu</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">54–55</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Molten Shrine <span class="sub">5.2</span></span></div><div class="tl-reward">+5% Maximum Life</div><div class="tl-act">Activate <b>Molten One's Gift</b> in the Skullmaw Stairway</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">54–55</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Qimah <span class="sub">5.2</span></span></div><div class="tl-reward"><b>1 of 7 Boons</b> — Kochai (+5 all attrs) · Halani (12% cooldown recovery) · Galai (20% presence AoE) · Ahkeli (15% global defences) · Orbala (3% move speed) · Tabana (+5% elemental res) <span class="tag pick">Changeable</span></div><div class="tl-act">Use <b>Orbala's Pillar</b> (the Seven Pillars)</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">55–58</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Kriar Village <span class="sub">5.3</span></span></div><div class="tl-reward">+40 Spirit</div><div class="tl-act">Kill <b>Lythara, the Wayward Spear</b>, use the Gemcrust Skull</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">55–58</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Howling Caves <span class="sub">5.3</span></span></div><div class="tl-reward">Book of Specialisation</div><div class="tl-act"><b>Howling Winds</b> — kill The Abominable Yeti, return the Icy Tusks to Hilda</div></div></li>
+        <li class="tl buff"><span class="tl-lvl"><span class="lvl">55–58</span></span><div class="tl-card"><div class="tl-top"><span class="pill buff">Buff</span><span class="tl-zone">Kriar Peaks <span class="sub">5.3</span></span></div><div class="tl-reward">Free Unique Item</div><div class="tl-act">Find <b>Elder Maddox</b> (around 10–11 o'clock on the map)</div></div></li>
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">~58</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Kingsmarch (completion)</span></div><div class="tl-reward">+2 Skill Points</div><div class="tl-act">After all 3 Interludes, talk to the <b>Hooded One</b></div></div></li>
+      </ul>
     </div>
   </details>
 
@@ -301,12 +381,9 @@
       <div class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg></div>
     </summary>
     <div class="act-body">
-      <table>
-        <thead><tr><th>Lvl</th><th>Zone</th><th>Reward</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr class="book"><td class="lvlcell" data-l="Lvl"><span class="lvl">Atlas</span></td><td class="zone" data-l="Zone">Site of the Chosen (centre of Precursor Fortress)</td><td class="reward" data-l="Reward"><span class="pill book">Book</span>+1 free Passive Point (for everyone on the league)</td><td class="action" data-l="Action">A Level 100 character must be sacrificed as a <b>Martyr of the First Edict</b> on the same league</td></tr>
-        </tbody>
-      </table>
+      <ul class="timeline">
+        <li class="tl book"><span class="tl-lvl"><span class="lvl">Atlas</span></span><div class="tl-card"><div class="tl-top"><span class="pill book">Book</span><span class="tl-zone">Site of the Chosen (centre of Precursor Fortress)</span></div><div class="tl-reward">+1 free Passive Point (for everyone on the league)</div><div class="tl-act">A Level 100 character must be sacrificed as a <b>Martyr of the First Edict</b> on the same league</div></div></li>
+      </ul>
     </div>
   </details>
 
@@ -327,6 +404,7 @@
   <footer>
     Path of Exile 2 <b>0.5.0 Return of the Ancients</b> (Runes of Aldur) · area levels from a Patch-0.5 leveling guide · accurate as of June 2026.<br>
     Zone levels and choice-buffs can shift between patches — confirm in-game before any irreversible pick.
+    <p class="disclaimer">This is an independent, fan-made leveling plan. It is not affiliated with, endorsed by, sponsored by, or officially connected to Grinding Gear Games in any way. "Path of Exile" and "Path of Exile 2" are trademarks of Grinding Gear Games Ltd. All game names, terms, and related data are the property of their respective owners and are referenced here for informational purposes only.</p>
   </footer>
 </div>
 
